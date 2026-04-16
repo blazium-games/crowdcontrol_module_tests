@@ -1,4 +1,4 @@
-extends GutTest
+extends AutoworkTest
 
 var credentials := {}
 const CACHE_FILE = "user://cc_test_token_ws.json"
@@ -42,7 +42,7 @@ func test_websocket_authentication():
 
 	if _load_cached_token() and CrowdControl.is_authenticated():
 		CrowdControl.connect_to_crowdcontrol("wss://pubsub.crowdcontrol.live/")
-		await wait_for_signal(CrowdControl.connection_established, 10.0)
+		await wait_for_signal(CrowdControl, "connection_established", 10.0)
 		assert_true(CrowdControl.is_websocket_connected(), "Loaded WS auth token and reconnected")
 		return
 
@@ -52,13 +52,13 @@ func test_websocket_authentication():
 	var err = CrowdControl.connect_to_crowdcontrol("wss://pubsub.crowdcontrol.live/")
 	assert_eq(err, OK, "Should initiate WebSocket connection")
 	
-	await wait_for_signal(CrowdControl.connection_established, 10.0)
+	await wait_for_signal(CrowdControl, "connection_established", 10.0)
 	assert_signal_emitted(CrowdControl, "connection_established")
 
 	err = CrowdControl.request_authentication_websocket()
 	assert_eq(err, OK, "Should write generate-auth-code to socket")
 
-	var url_emitted = await wait_for_signal(CrowdControl.authentication_url_ready, 10.0)
+	var url_emitted = await wait_for_signal(CrowdControl, "authentication_url_ready", 10.0)
 	if url_emitted:
 		var url_params = get_signal_parameters(CrowdControl, "authentication_url_ready")
 		if url_params != null and url_params.size() > 0:
@@ -68,7 +68,7 @@ func test_websocket_authentication():
 			print("Waiting 120 seconds for manual authorization...")
 			print("=======================================================\n")
 
-	await wait_for_signal(CrowdControl.authenticated, 120.0)
+	await wait_for_signal(CrowdControl, "authenticated", 120.0)
 	assert_signal_emitted(CrowdControl, "authenticated")
 	
 	var params = get_signal_parameters(CrowdControl, "authenticated")

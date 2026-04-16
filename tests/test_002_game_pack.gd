@@ -1,4 +1,4 @@
-extends GutTest
+extends AutoworkTest
 
 func test_001_meta_instantiation():
 	var meta = CrowdControlGamePackMeta.new()
@@ -17,16 +17,16 @@ func test_001_meta_instantiation():
 func test_002_effect_parameters():
 	var param = CrowdControlEffectParameter.new()
 	assert_not_null(param, "Param instantiated")
-	param.set_parameter_id("param1")
-	param.set_name("Speed")
-	param.set_min_value(1.0)
-	param.set_max_value(10.0)
+	param.set_parameter_type("options")
+	param.set_parameter_name("Speed")
+	var options = {"1": "Fast", "2": "Very Fast"}
+	param.set_options(options)
 	
 	var d = param.to_json()
-	assert_eq(d.has("id"), true)
-	assert_eq(d["id"], "param1")
-	assert_eq(d["min"], 1.0)
-	assert_eq(d["max"], 10.0)
+	assert_eq(d.has("type"), true)
+	assert_eq(d["type"], "options")
+	assert_eq(d["name"], "Speed")
+	assert_eq(d["options"]["1"]["name"], "Fast")
 
 func test_003_effect():
 	var effect = CrowdControlEffect.new()
@@ -37,8 +37,9 @@ func test_003_effect():
 	effect.set_price(100)
 	
 	var param = CrowdControlEffectParameter.new()
-	param.set_parameter_id("mult")
-	param.set_max_value(5)
+	param.set_parameter_type("options")
+	var options = {"1": "Fast"}
+	param.set_options(options)
 	var params = []
 	params.append(param)
 	effect.set_parameters(params)

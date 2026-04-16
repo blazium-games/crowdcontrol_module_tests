@@ -1,4 +1,4 @@
-extends GutTest
+extends AutoworkTest
 
 var credentials := {}
 const CACHE_FILE = "user://cc_test_token_http.json"
@@ -41,13 +41,13 @@ func before_each():
 	CrowdControl.close()
 	CrowdControl.set_credentials(credentials.get("applicationID", ""), credentials.get("secret", ""))
 	CrowdControl.request_authentication_http()
-	var url_emitted = await wait_for_signal(CrowdControl.authentication_url_ready, 10.0)
+	var url_emitted = await wait_for_signal(CrowdControl, "authentication_url_ready", 10.0)
 	if url_emitted:
 		var url_params = get_signal_parameters(CrowdControl, "authentication_url_ready")
 		if url_params != null and url_params.size() > 0:
 			print("\nPLEASE AUTHORIZE (HTTP SESSION TEST): ", url_params[0])
 		
-	await wait_for_signal(CrowdControl.authenticated, 120.0)
+	await wait_for_signal(CrowdControl, "authenticated", 120.0)
 	if CrowdControl.is_authenticated():
 		_save_cached_token()
 
@@ -56,7 +56,7 @@ func test_start_session():
 	var err = CrowdControl.start_game_session(credentials.get("gameID", "BlaziumDemo"))
 	assert_eq(err, OK, "Should queue HTTP start_game_session")
 
-	await wait_for_signal(CrowdControl.game_session_started, 5.0)
+	await wait_for_signal(CrowdControl, "game_session_started", 5.0)
 	assert_signal_emitted(CrowdControl, "game_session_started")
 	
 	var session_id = CrowdControl.get_game_session_id()
@@ -65,11 +65,11 @@ func test_start_session():
 func test_stop_session():
 	watch_signals(CrowdControl)
 	CrowdControl.start_game_session(credentials.get("gameID", "BlaziumDemo"))
-	await wait_for_signal(CrowdControl.game_session_started, 5.0)
+	await wait_for_signal(CrowdControl, "game_session_started", 5.0)
 	
 	var err = CrowdControl.stop_game_session()
 	assert_eq(err, OK, "Should queue HTTP stop_game_session")
 	
-	await wait_for_signal(CrowdControl.game_session_stopped, 5.0)
+	await wait_for_signal(CrowdControl, "game_session_stopped", 5.0)
 	assert_signal_emitted(CrowdControl, "game_session_stopped")
 	assert_eq(CrowdControl.get_game_session_id(), "", "Session ID should be cleared")

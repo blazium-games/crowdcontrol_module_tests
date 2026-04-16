@@ -1,4 +1,4 @@
-extends GutTest
+extends AutoworkTest
 
 var credentials := {}
 const CACHE_FILE = "user://cc_test_token_http.json"
@@ -41,13 +41,13 @@ func before_each():
 	CrowdControl.close()
 	CrowdControl.set_credentials(credentials.get("applicationID", ""), credentials.get("secret", ""))
 	CrowdControl.request_authentication_http()
-	var url_emitted = await wait_for_signal(CrowdControl.authentication_url_ready, 10.0)
+	var url_emitted = await wait_for_signal(CrowdControl, "authentication_url_ready", 10.0)
 	if url_emitted:
 		var url_params = get_signal_parameters(CrowdControl, "authentication_url_ready")
 		if url_params != null and url_params.size() > 0:
 			print("\nPLEASE AUTHORIZE (HTTP REPORTS TEST): ", url_params[0])
 		
-	await wait_for_signal(CrowdControl.authenticated, 120.0)
+	await wait_for_signal(CrowdControl, "authenticated", 120.0)
 	if CrowdControl.is_authenticated():
 		_save_cached_token()
 
