@@ -6,12 +6,16 @@ const CACHE_FILE = "user://cc_test_token_http.json"
 func _process(_delta):
 	CrowdControl.poll()
 
+func _has_secrets() -> bool:
+	if FileAccess.file_exists("res://secrets.json"):
+		return true
+	pending("Requires secrets.json")
+	return false
+
 func before_all():
 	var f = FileAccess.open("res://secrets.json", FileAccess.READ)
 	if f:
 		credentials = JSON.parse_string(f.get_as_text())
-	else:
-		push_error("Missing secrets.json!")
 
 func after_all():
 	pass
@@ -38,6 +42,8 @@ func before_each():
 	pass
 
 func test_http_authentication():
+	if not _has_secrets():
+		return
 	watch_signals(CrowdControl)
 
 	if _load_cached_token() and CrowdControl.is_authenticated():

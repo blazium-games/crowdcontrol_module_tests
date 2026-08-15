@@ -6,12 +6,16 @@ const CACHE_FILE = "user://cc_test_token_ws.json"
 func _process(_delta):
 	CrowdControl.poll()
 
+func _has_secrets() -> bool:
+	if FileAccess.file_exists("res://secrets.json"):
+		return true
+	pending("Requires secrets.json")
+	return false
+
 func before_all():
 	var f = FileAccess.open("res://secrets.json", FileAccess.READ)
 	if f:
 		credentials = JSON.parse_string(f.get_as_text())
-	else:
-		push_error("Missing secrets.json!")
 
 func after_all():
 	pass
@@ -35,6 +39,8 @@ func _save_cached_token():
 	f.store_string(JSON.stringify(cache))
 
 func before_each():
+	if not FileAccess.file_exists("res://secrets.json"):
+		return
 	if CrowdControl.is_authenticated() and CrowdControl.is_websocket_connected():
 		return
 		
@@ -61,48 +67,66 @@ func before_each():
 		_save_cached_token()
 
 func test_respond_instant_effect():
+	if not _has_secrets():
+		return
 	watch_signals(CrowdControl)
 
 	var err = CrowdControl.respond_to_effect_instant("fake_req_123", CrowdControl.STATUS_SUCCESS, "Effect applied successfully")
 	assert_eq(err, OK, "Should write instant effect response to WebSocket")
 
 func test_respond_timed_effect():
+	if not _has_secrets():
+		return
 	watch_signals(CrowdControl)
 
 	var err = CrowdControl.respond_to_effect_timed("fake_req_456", CrowdControl.STATUS_TIMED_BEGIN, 60000, "Timed effect started")
 	assert_eq(err, OK, "Should write timed effect response to WebSocket")
 
 func test_effect_changecolor():
+	if not _has_secrets():
+		return
 	watch_signals(CrowdControl)
 	var err = CrowdControl.respond_to_effect_instant("req_changecolor_123", CrowdControl.STATUS_SUCCESS, "Color changed successfully")
 	assert_eq(err, OK, "Should write instant response for changecolor")
 
 func test_effect_invertcontrols():
+	if not _has_secrets():
+		return
 	watch_signals(CrowdControl)
 	var err = CrowdControl.respond_to_effect_timed("req_invertcontrols_123", CrowdControl.STATUS_TIMED_BEGIN, 30000, "Invert Controls started")
 	assert_eq(err, OK, "Should write timed response for invertcontrols")
 
 func test_effect_takecoins():
+	if not _has_secrets():
+		return
 	watch_signals(CrowdControl)
 	var err = CrowdControl.respond_to_effect_instant("req_takecoins_123", CrowdControl.STATUS_SUCCESS, "Coins taken")
 	assert_eq(err, OK, "Should write instant response for takecoins")
 
 func test_effect_givecoins():
+	if not _has_secrets():
+		return
 	watch_signals(CrowdControl)
 	var err = CrowdControl.respond_to_effect_instant("req_givecoins_123", CrowdControl.STATUS_SUCCESS, "Coins given")
 	assert_eq(err, OK, "Should write instant response for givecoins")
 
 func test_effect_recover():
+	if not _has_secrets():
+		return
 	watch_signals(CrowdControl)
 	var err = CrowdControl.respond_to_effect_instant("req_recover_123", CrowdControl.STATUS_SUCCESS, "Health recovered")
 	assert_eq(err, OK, "Should write instant response for recover")
 
 func test_effect_damageplayer():
+	if not _has_secrets():
+		return
 	watch_signals(CrowdControl)
 	var err = CrowdControl.respond_to_effect_instant("req_damageplayer_123", CrowdControl.STATUS_SUCCESS, "Player damaged")
 	assert_eq(err, OK, "Should write instant response for damageplayer")
 
 func test_effect_jump():
+	if not _has_secrets():
+		return
 	watch_signals(CrowdControl)
 	var err = CrowdControl.respond_to_effect_instant("req_jump_123", CrowdControl.STATUS_SUCCESS, "Jumped")
 	assert_eq(err, OK, "Should write instant response for jump")
