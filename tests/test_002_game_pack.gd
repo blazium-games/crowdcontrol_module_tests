@@ -1,4 +1,4 @@
-extends GutTest
+extends AutoworkTest
 
 func test_001_meta_instantiation():
 	var meta = CrowdControlGamePackMeta.new()

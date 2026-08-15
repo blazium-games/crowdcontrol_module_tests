@@ -1,4 +1,4 @@
-extends GutTest
+extends AutoworkTest
 
 var credentials := {}
 const CACHE_FILE = "user://cc_test_token_http.json"
@@ -12,12 +12,12 @@ func _has_secrets() -> bool:
 	pending("Requires secrets.json")
 	return false
 
-func before_all():
+func _before_all():
 	var f = FileAccess.open("res://secrets.json", FileAccess.READ)
 	if f:
 		credentials = JSON.parse_string(f.get_as_text())
 
-func after_all():
+func _after_all():
 	pass
 
 func _load_cached_token() -> bool:
@@ -38,7 +38,7 @@ func _save_cached_token():
 	var f = FileAccess.open(CACHE_FILE, FileAccess.WRITE)
 	f.store_string(JSON.stringify(cache))
 
-func before_each():
+func _before_each():
 	pass
 
 func test_http_authentication():
