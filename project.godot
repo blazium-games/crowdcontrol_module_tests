@@ -10,15 +10,16 @@ config_version=5
 
 [application]
 
-config/name="irc_module_tests"
+config/name="CrowdControl Module Tests"
 config/features=PackedStringArray("4.3.2", "GL Compatibility")
 config/icon="res://icon.svg"
 
-[editor_plugins]
-
-enabled=PackedStringArray()
 
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+
+[autowork]
+
+run_tests_on_startup=false

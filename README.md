@@ -1,14 +1,14 @@
-# Crowdcontrol Module Tests
+# Blazium Engine CrowdControl Module Tests
 
-A test suite and example project for the **Crowdcontrol** module built for the Blazium Engine.
+This repository contains Autowork tests that comprehensively validate the
+functionality of the integrated C++ CrowdControl implementation within
+the [Blazium Engine](https://github.com/blazium-games/blazium).
 
-## Features
-- Fully integrated with the native C++ **Autowork** testing framework.
-- Executes tests in headless mode.
+## Running the Tests
 
-## Running Tests
-To run the test suite natively:
+To execute the tests in a headless environment, use the following command
+structure against your local Blazium Editor executable:
 
 ```bash
-blazium --headless -s run_tests.gd
+blazium --headless --path . -s run_tests.gd
 ```
