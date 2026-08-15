@@ -1,7 +1,5 @@
-# Godot 4+ specific ignores
 .godot/
-/android/
-secrets.json
-*.py
-/tmp
-test_output_*.txt
+*.log
+.vs/
+.idea/
+tmp/
